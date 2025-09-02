@@ -14,7 +14,7 @@ class Users extends BaseController
     {
         $this->userModel = new UserModel();
         $this->roleModel = new RoleModel();
-        helper('auth');
+        helper(['auth', 'audit']);
     }
 
     public function index()
@@ -54,7 +54,7 @@ class Users extends BaseController
             'status'   => $this->request->getPost('status'),
         ]);
         logAudit('CREATE', 'Users', $userModel->insertID(), [], $this->request->getPost());
-        return redirect()->to('/users');
+        return redirect()->to('/users')->with('success', 'User created successfully');
     }
 
     public function edit($id)
@@ -85,7 +85,7 @@ class Users extends BaseController
         }
         $userModel->update($id, $data);
         logAudit('UPDATE', 'Users', $id, $userModel->find($id), $this->request->getPost());
-        return redirect()->to('/users');
+        return redirect()->to('/users')->with('success', 'User updated successfully.');
     }
 
     public function delete($id)
@@ -94,9 +94,14 @@ class Users extends BaseController
             return view('errors/no_access');
         }
         $userModel = new UserModel();
-        logAudit('DELETE', 'Users', $id, $userModel->find($id), []);
-        $userModel->delete($id);
-        return redirect()->to('/users');
+        $insertResult = $userModel->delete($id);
+
+        if ($insertResult) {
+            logAudit('DELETE', 'Users', $id, $userModel->find($id), []);
+            return redirect()->to('/users')->with('success', 'User deleted successfully.');
+        } else {
+            return redirect()->to('/users')->with('error', 'Failed to delete user.');
+        }
     }
 
     public function updateRole()

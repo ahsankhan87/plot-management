@@ -13,7 +13,7 @@ class Company extends BaseController
     {
         $this->companyModel = new CompanyModel();
         $this->validation = \Config\Services::validation();
-        helper('auth');
+        helper(['auth', 'audit']);
     }
 
     public function index()

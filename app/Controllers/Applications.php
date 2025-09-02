@@ -12,6 +12,7 @@ use App\Models\InstallmentPlansModel;
 use App\Models\PrintLogModel;
 use CodeIgniter\Controller;
 use App\Models\LetterPrintHistoryModel;
+use App\Models\CompanyModel;
 
 class Applications extends Controller
 {
@@ -24,6 +25,7 @@ class Applications extends Controller
     protected $installmentPlansModel;
     protected $installmentModel;
     protected $letterModel;
+    protected $companyModel;
 
 
     public function __construct()
@@ -37,8 +39,8 @@ class Applications extends Controller
         $this->installmentModel = new InstallmentModel();
         $this->letterModel = new LetterPrintHistoryModel();
         $this->installmentPlansModel = new InstallmentPlansModel();
-        helper('audit');
-        helper('auth');
+        $this->companyModel = new CompanyModel();
+        helper(['audit', 'auth']);
     }
 
     public function index()
@@ -256,6 +258,7 @@ class Applications extends Controller
             ->where('letter_type', $type)
             ->countAllResults() > 0;
 
+        // Log the print
         $this->letterModel->insert([
             'application_id' => $appId,
             'letter_type'    => $type,
@@ -269,37 +272,53 @@ class Applications extends Controller
     }
 
     // Print Provisional or Allotment Letter
-    public function printLetter($id, $type = 'provisional')
+    public function printLetter($appId, $type = 'provisional')
     {
+        if (!auth()->user()->can('applications_print')) {
+            return view('errors/no_access');
+        }
+
         $letterModel = new LetterPrintHistoryModel();
         $appModel = new ApplicationsModel();
         $installmentPlansModel = new InstallmentPlansModel();
-        $application = $appModel->find($id);
+        $application = $appModel->getApplicationDetail($appId);
         $installmentPlan = null;
+        $companyDetail = $this->companyModel->getCompany();
+        $plotDetail = $this->plotModel->getPlotDetails($application['plot_id']);
 
         if ($application && !empty($application['installment_plan_id'])) {
             $installmentPlan = $installmentPlansModel->find($application['installment_plan_id']);
         }
 
         // Check duplicate
-        $isDuplicate = $letterModel->where('application_id', $id)
+        $isDuplicate = $letterModel->where('application_id', $appId)
             ->where('letter_type', $type)
             ->countAllResults() > 0;
 
         $letterModel->insert([
-            'application_id' => $id,
+            'application_id' => $appId,
             'letter_type'    => $type,
             'printed_by'     => session()->get('user_id'),
             'is_duplicate'   => $isDuplicate ? 1 : 0
         ]);
+
+        // Application status to provisional
+        $this->applicationModel->update($appId, [
+            'status'     => $type === 'provisional' ? 'Provisional' : 'Completed',
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
         //log
-        logAudit('PRINT', 'Applications', $id, $application, ['letter_type' => $type]);
+        logAudit('PRINT', 'Applications', $appId, $application, ['letter_type' => $type]);
+
 
         // Load print view
         return view("applications/letters/{$type}", [
             'application' => $application,
             'installmentPlan' => $installmentPlan,
-            'isDuplicate' => $isDuplicate
+            'isDuplicate' => $isDuplicate,
+            'companyDetail' => $companyDetail,
+            'plotDetail' => $plotDetail
         ]);
     }
 

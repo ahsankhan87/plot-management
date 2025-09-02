@@ -23,26 +23,27 @@ class Plots extends Controller
         $this->phaseModel = new PhaseModel();
         $this->sectorModel = new SectorModel();
         $this->streetModel = new StreetModel();
-        helper('form', 'url', 'audit');
-        helper('audit');
+        $this->validation = \Config\Services::validation();
+        helper(['form', 'url', 'audit', 'auth']);
     }
 
     public function index()
     {
-        //permission
-        // Usage in controllers:
-        // if (!user_has_permission('manage_users')) {
-        //     return redirect()->to('/dashboard')->with('error', 'Access Denied');
-        // }
+        if (!auth()->user()->can('plot_view')) {
+            return view('errors/no_access');
+        }
 
         $data['title'] = 'Plots List';
-        $data['plots'] = $this->plotModel->findAll();
+        $data['plots'] = $this->plotModel->getAllPlots();
 
         return view('plots/index', $data);
     }
 
     public function create()
     {
+        if (!auth()->user()->can('plot_create')) {
+            return view('errors/no_access');
+        }
         $data['projects'] = $this->projectModel->findAll();
         $data['phases'] = $this->phaseModel->findAll();
         $data['sectors'] = $this->sectorModel->findAll();
@@ -56,32 +57,26 @@ class Plots extends Controller
     {
         $data = $this->request->getPost();
         // print_r($data);
-        // echo $data['block_id'];
+
         // die();
         if (! $this->validateData($data, [
             // Validation rules
 
             'plot_no'   => 'required|is_unique[plots.plot_no]',
-            'project_id' => 'permit_empty',
-            'phase_id'  => 'permit_empty',
-            'sector_id'  => 'permit_empty',
+            'project_id' => 'required',
+            'phase_id'  => 'required',
+            'sector_id'  => 'required',
             'street_id' => 'required|numeric',
-            'block_id'  => 'required',
+            'block_id'  => 'permit_empty',
             'size'      => 'required',
             'area_sqft' => 'required|numeric',
             'status' => 'required|in_list[available,booked,allotted,transferred,cancelled]',
             'type'      => 'permit_empty',
             'base_price' => 'permit_empty|numeric',
+            'facing'    => 'permit_empty|in_list[north,south,east,west]',
 
         ])) {
-            return view('plots/create', [
-                'validation' => $this->validator,
-                'projects'   => $this->projectModel->findAll(),
-                'phases'     => $this->phaseModel->findAll(),
-                'sectors'    => $this->sectorModel->findAll(),
-                'streets'    => $this->streetModel->findAll(),
-                'blocks'     => $this->blockModel->findAll(),
-            ]);
+            return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
         }
 
         $this->plotModel->save([
@@ -94,8 +89,9 @@ class Plots extends Controller
             'size'      => $data['size'],
             'area_sqft' => $data['area_sqft'],
             'base_price' => $data['base_price'],
-            'status'    => $data['status'] ?? 'available',
-            'type'      => $data['type'] ?? 'residential',
+            'status'    => $data['status'] ?? 'Available',
+            'type'      => $data['type'] ?? 'Residential',
+            'facing'    => $data['facing'] ?? 'North',
         ]);
 
         logAudit('CREATE', 'Plots', $this->plotModel->insertID(), [], $data);
@@ -105,7 +101,16 @@ class Plots extends Controller
 
     public function edit($id)
     {
+        if (!auth()->user()->can('plot_edit')) {
+            return view('errors/no_access');
+        }
         $data['plot'] = $this->plotModel->find($id);
+        $data['projects'] = $this->projectModel->findAll();
+        $data['phases'] = $this->phaseModel->findAll();
+        $data['sectors'] = $this->sectorModel->findAll();
+        $data['streets'] = $this->streetModel->findAll();
+        $data['blocks'] = $this->blockModel->findAll();
+
         return view('plots/edit', $data);
     }
 
@@ -114,20 +119,30 @@ class Plots extends Controller
         $rules = [
             'plot_no'   => 'required',
             //'block_id'     => 'required',
+            'project_id' => 'required',
+            'phase_id'  => 'required',
+            'sector_id'  => 'required',
+            'street_id' => 'required|numeric',
             'size'      => 'required',
             'area_sqft' => 'required|numeric',
             'base_price' => 'required|numeric',
             'type'      => 'permit_empty',
+            'facing'    => 'permit_empty|in_list[north,south,east,west]',
         ];
 
         if ($this->validate($rules)) {
             $this->plotModel->update($id, [
                 'plot_no'   => $this->request->getPost('plot_no'),
+                'project_id' => $this->request->getPost('project_id'),
+                'phase_id'   => $this->request->getPost('phase_id'),
+                'sector_id'  => $this->request->getPost('sector_id'),
+                'street_id' => $this->request->getPost('street_id'),
                 //'block_id'     => $this->request->getVar('block_id'),
                 'size'      => $this->request->getPost('size'),
                 'area_sqft' => $this->request->getPost('area_sqft'),
                 'base_price' => $this->request->getPost('base_price'),
                 'type'      => $this->request->getPost('type'),
+                'facing'    => $this->request->getPost('facing'),
             ]);
 
             logAudit('UPDATE', 'Plots', $id, $this->plotModel->find($id), $this->request->getPost());
@@ -137,9 +152,21 @@ class Plots extends Controller
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
     }
+    public function view($id)
+    {
+        if (!auth()->user()->can('plot_view')) {
+            return view('errors/no_access');
+        }
+
+        $data['plot'] = $this->plotModel->getPlotDetails($id);
+        return view('plots/view', $data);
+    }
 
     public function delete($id)
     {
+        if (!auth()->user()->can('plot_delete')) {
+            return view('errors/no_access');
+        }
         if ($this->plotModel->delete($id)) {
             logAudit('DELETE', 'Plots', $id, $this->plotModel->find($id), []);
             return redirect()->to('/plots')->with('success', 'Plot deleted successfully');

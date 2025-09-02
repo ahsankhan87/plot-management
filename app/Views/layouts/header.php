@@ -209,9 +209,17 @@
                                         <i class="fas fa-road mr-3 text-gray-500"></i>
                                         <span>Streets</span>
                                     </a>
+                                    <a href="<?= site_url('installmentplans') ?>" class="user-menu-item flex items-center px-4 py-2 text-gray-700">
+                                        <i class="fas fa-file-invoice-dollar mr-3 text-gray-500"></i>
+                                        <span>Installment Plans</span>
+                                    </a>
                                     <a href="<?= site_url('audit') ?>" class="user-menu-item flex items-center px-4 py-2 text-gray-700">
                                         <i class="fas fa-file-alt mr-3 text-gray-500"></i>
                                         <span>Audit Log</span>
+                                    </a>
+                                    <a href="<?= site_url('backup') ?>" class="user-menu-item flex items-center px-4 py-2 text-blue-700">
+                                        <i class="fas fa-database mr-3 text-blue-500"></i>
+                                        <span>Download DB Backup</span>
                                     </a>
                                 </div>
 

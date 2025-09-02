@@ -23,4 +23,38 @@ class UserModel extends Model
     protected $createdField = 'created_at';
 
     protected $returnType = 'array';
+
+    public function getUserByEmail($email)
+    {
+        return $this->where('email', $email)->first();
+    }
+    public function getUserByUsername($username)
+    {
+        return $this->where('username', $username)->first();
+    }
+
+    public function createResetToken($email)
+    {
+        $user = $this->where('email', $email)->first();
+        if (!$user) {
+            return false;
+        }
+
+        $token = bin2hex(random_bytes(16));
+        $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+        $this->update($user['id'], [
+            'reset_token' => $token,
+            'reset_expires' => $expires
+        ]);
+
+        return $token;
+    }
+
+    public function verifyResetToken($token)
+    {
+        return $this->where('reset_token', $token)
+            ->where('reset_expires >', date('Y-m-d H:i:s'))
+            ->first();
+    }
 }

@@ -6,6 +6,7 @@ use App\Models\TransferModel;
 use App\Models\ApplicationsModel;
 use App\Models\CustomersModel;
 use App\Models\PaymentModel;
+use App\Models\PlotsModel;
 
 class Transfers extends BaseController
 {
@@ -13,6 +14,7 @@ class Transfers extends BaseController
     protected $applicationsModel;
     protected $customersModel;
     protected $paymentModel;
+    protected $plotModel;
 
     public function __construct()
     {
@@ -20,6 +22,7 @@ class Transfers extends BaseController
         $this->applicationsModel = new ApplicationsModel();
         $this->customersModel = new CustomersModel();
         $this->paymentModel = new PaymentModel();
+        $this->plotModel = new PlotsModel();
 
         helper(['form', 'filesystem', 'audit', 'auth']);
     }
@@ -92,6 +95,7 @@ class Transfers extends BaseController
         }
 
         $postData = $this->request->getPost();
+
         $applicationId = $postData['application_id'];
 
         // Validate transfer eligibility
@@ -102,7 +106,7 @@ class Transfers extends BaseController
         $application = $this->applicationsModel->find($applicationId);
 
         // Handle document uploads
-        $documentFile = $this->request->getFile('photo_path');
+        $documentFile = $this->request->getFile('documents');
         $documentName = null;
         if ($documentFile && $documentFile->isValid() && !$documentFile->hasMoved()) {
             $documentName = $documentFile->getRandomName();
@@ -128,6 +132,7 @@ class Transfers extends BaseController
         // if ($documents) {
         //     $transferData['transfer_documents'] = json_encode($documents);
         // }
+
 
         if ($this->transferModel->save($transferData)) {
             logAudit('CREATE', 'Transfer', $this->transferModel->getInsertID(), null, $transferData);
@@ -177,6 +182,8 @@ class Transfers extends BaseController
             return view('errors/no_access');
         }
         $transfer = $this->transferModel->find($id);
+        $application = $this->applicationsModel->find($transfer['application_id']);
+
         if (!$transfer) {
             return redirect()->back()->with('error', 'Transfer not found');
         }
@@ -186,6 +193,10 @@ class Transfers extends BaseController
         }
 
         if ($this->transferModel->approveTransfer($id, session()->get('user_id'))) {
+
+            // Update plot status →  transferred
+            $this->plotModel->update($application['plot_id'], ['status' => 'transferred']);
+
             logAudit('APPROVE', 'Transfer', $id, $transfer, ['approved_by' => session()->get('user_id')]);
             return redirect()->to('/transfers/view/' . $id)->with('success', 'Transfer approved successfully');
         }
@@ -254,13 +265,14 @@ class Transfers extends BaseController
     {
         $totalPaid = $this->paymentModel->getTotalPaid($applicationId);
         $application = $this->applicationsModel->find($applicationId);
-        $balance = $application['total_price'] - $totalPaid;
+        $plot = $this->plotModel->find($application['plot_id']);
+        $balance = $plot['base_price'] - $totalPaid;
 
         return [
-            'total_price' => $application['total_price'],
+            'total_price' => $plot['base_price'],
             'total_paid' => $totalPaid,
             'balance' => $balance,
-            'completion_percentage' => ($totalPaid / $application['total_price']) * 100
+            'completion_percentage' => ($totalPaid / $plot['base_price']) * 100
         ];
     }
 

@@ -45,15 +45,20 @@ class TransferModel extends Model
     {
         $applicationModel = new \App\Models\ApplicationsModel();
         $paymentModel = new \App\Models\PaymentModel();
+        $plotModel = new \App\Models\PlotsModel();
 
         $application = $applicationModel->find($applicationId);
         if (!$application) {
             return false;
         }
 
+        $plot = $plotModel->find($application['plot_id']);
+        if (!$plot) {
+            return false;
+        }
         // Check if at least 25% of total amount is paid
         $totalPaid = $paymentModel->getTotalPaid($applicationId);
-        $minRequired = $application['total_price'] * 0.25;
+        $minRequired = $plot['base_price'] * 0.25;
 
         return $totalPaid >= $minRequired;
     }

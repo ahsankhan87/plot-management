@@ -72,6 +72,7 @@ $routes->group('plots', ['filter' => 'auth'], function ($routes) {
     $routes->get('edit/(:num)', 'Plots::edit/$1');
     $routes->post('update/(:num)', 'Plots::update/$1');
     $routes->get('delete/(:num)', 'Plots::delete/$1');
+    $routes->get('view/(:num)', 'Plots::view/$1');
 });
 
 $routes->group('projects', ['filter' => 'auth'], function ($routes) {
@@ -124,6 +125,8 @@ $routes->group('users', ['filter' => 'auth'], function ($routes) {
     $routes->post('update-role', 'Users::updateRole');
 });
 
+$routes->get('backup', 'Backup::index');
+$routes->get('backup/download', 'Backup::download');
 
 $routes->group('audit', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'Audit::index');
@@ -187,6 +190,16 @@ $routes->group('transfers', ['filter' => 'auth'], function ($routes) {
     $routes->get('approve/(:num)', 'Transfers::approve/$1');
     $routes->post('reject/(:num)', 'Transfers::reject/$1');
     $routes->get('agreement/(:num)', 'Transfers::generateAgreement/$1');
+});
+
+// Installment Plans routes
+$routes->group('installmentplans', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'InstallmentPlans::index');
+    $routes->get('create', 'InstallmentPlans::create');
+    $routes->post('store', 'InstallmentPlans::store');
+    $routes->get('edit/(:num)', 'InstallmentPlans::edit/$1');
+    $routes->post('update/(:num)', 'InstallmentPlans::update/$1');
+    $routes->get('delete/(:num)', 'InstallmentPlans::delete/$1');
 });
 
 // API routes

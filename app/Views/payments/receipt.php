@@ -8,9 +8,9 @@
     </div>
 
     <div class="mb-4">
-        <p><span class="font-semibold">Customer:</span> <?= esc($payment['customer_name'] ?? '') ?></p>
-        <p><span class="font-semibold">Plot No:</span> <?= esc($payment['plot_no'] ?? '') ?></p>
-        <p><span class="font-semibold">Project:</span> <?= esc($payment['project_name'] ?? '') ?></p>
+        <p><span class="font-semibold">Customer:</span> <?= esc($booking['customer_name'] ?? '') ?></p>
+        <p><span class="font-semibold">Plot No:</span> <?= esc($booking['plot_no'] ?? '') ?></p>
+        <p><span class="font-semibold">Project:</span> <?= esc($booking['project_name'] ?? '') ?></p>
         <p><span class="font-semibold">Payment Date:</span> <?= date('d M Y', strtotime($payment['payment_date'] ?? '')) ?></p>
         <p><span class="font-semibold">Due Date:</span> <?= date('d M Y', strtotime($payment['due_date'] ?? '')) ?></p>
         <p>

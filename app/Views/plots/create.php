@@ -3,28 +3,26 @@
 
 <div class="w-full mx-auto bg-white rounded-lg shadow p-6">
     <h2 class="text-xl font-bold mb-4">Add New Plot</h2>
-    <?php if (isset($validation)): ?>
-        <div class="bg-red-200 text-red-800 p-2 rounded mt-3">
-            <?= $validation->listErrors() ?>
+
+    <?php if (session()->getFlashdata('errors')): ?>
+        <div class="bg-red-500 text-white p-4 rounded mb-4">
+            <h2 class="font-bold">Validation Errors</h2>
+            <ul>
+                <?php foreach (session()->getFlashdata('errors') as $error): ?>
+                    <li><?= esc($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
         </div>
     <?php endif; ?>
-    <!-- <ul class="list-disc pl-5">
-        <?php if (isset($validation)): ?>
-            <?php foreach ($validation->getErrors() as $error): ?>
-                <li class="text-red-600"><?= esc($error) ?></li>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </ul> -->
-
     <form method="post" action=<?= site_url("/plots/store") ?> class="space-y-3">
         <!-- Project Dropdown -->
         <div class="mb-4">
             <label class="block text-gray-700">Project</label>
             <div class="flex">
-                <select id="project" name="project_id" class="w-full border rounded p-2">
+                <select id="project" name="project_id" value="<?= old('project_id') ?>" class="w-full border rounded p-2">
                     <option value="">-- Select Project --</option>
                     <?php foreach ($projects as $project): ?>
-                        <option value="<?= $project['id'] ?>"><?= $project['name'] ?></option>
+                        <option value="<?= $project['id'] ?>" <?= $project['id'] == old('project_id') ? 'selected' : '' ?>><?= $project['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
                 <button type="button" class="ml-2 bg-blue-500 text-white px-2 rounded" onclick="openModal('projectModal')">+</button>
@@ -35,7 +33,7 @@
         <div class="mb-4">
             <label class="block text-gray-700">Phase</label>
             <div class="flex">
-                <select id="phase" name="phase_id" class="w-full border rounded p-2">
+                <select id="phase" name="phase_id" value="<?= old('phase_id') ?>" class="w-full border rounded p-2">
                     <option value="">-- Select Phase --</option>
                 </select>
                 <button type="button" class="ml-2 bg-blue-500 text-white px-2 rounded" onclick="openModal('phaseModal')">+</button>
@@ -46,7 +44,7 @@
         <div class="mb-4">
             <label class="block text-gray-700">Sector</label>
             <div class="flex">
-                <select id="sector" name="sector_id" class="w-full border rounded p-2">
+                <select id="sector" name="sector_id" value="<?= old('sector_id') ?>" class="w-full border rounded p-2">
                     <option value="">-- Select Sector --</option>
                 </select>
                 <button type="button" class="ml-2 bg-blue-500 text-white px-2 rounded" onclick="openModal('sectorModal')">+</button>
@@ -57,7 +55,7 @@
         <div class="mb-4">
             <label class="block text-gray-700">Street</label>
             <div class="flex">
-                <select id="street" name="street_id" class="w-full border rounded p-2">
+                <select id="street" name="street_id" value="<?= old('street_id') ?>" class="w-full border rounded p-2">
                     <option value="">-- Select Street --</option>
                 </select>
                 <button type="button" class="ml-2 bg-blue-500 text-white px-2 rounded" onclick="openModal('streetModal')">+</button>
@@ -67,28 +65,29 @@
         <!-- Block Dropdown -->
         <div class="mb-4">
             <label class="block text-gray-700">Plot No</label>
-            <input type="text" name="plot_no" class="border rounded w-full p-2" required>
+            <input type="text" name="plot_no" value="<?= old('plot_no') ?>" class="border rounded w-full p-2" required>
         </div>
         <div class="mb-4">
             <label class="block text-gray-700">Block</label>
-            <select name="block_id" class="border rounded w-full p-2" required>
+            <select name="block_id" class="border rounded w-full p-2">
+                <option value="">-- Select Block --</option>
                 <?php foreach ($blocks as $block): ?>
-                    <option value="<?= $block['id'] ?>"><?= $block['name'] ?></option>
+                    <option value="<?= $block['id'] ?>" <?= $block['id'] == old('block_id') ? 'selected' : '' ?>><?= $block['name'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
         <div class="mb-4">
             <label class="block text-gray-700">Size</label>
-            <input type="text" name="size" class="border rounded w-full p-2" required>
+            <input type="text" name="size" value="<?= old('size') ?>" class="border rounded w-full p-2" required>
         </div>
         <div class="mb-4">
             <label class="block text-gray-700">Area (sqft)</label>
-            <input type="number" name="area_sqft" class="border rounded w-full p-2" required>
+            <input type="number" name="area_sqft" value="<?= old('area_sqft') ?>" class="border rounded w-full p-2" required>
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-700">Base Price</label>
-            <input type="number" name="base_price" class="border rounded w-full p-2" required>
+            <input type="number" name="base_price" value="<?= old('base_price') ?>" class="border rounded w-full p-2" required>
         </div>
         <div class="mb-4">
             <label class="block text-gray-700">Type</label>
@@ -98,13 +97,22 @@
             </select>
         </div>
         <div class="mb-4">
+            <label class="block text-gray-700">Facing</label>
+            <select name="facing" class="border rounded w-full p-2">
+                <option value="north" <?= old('facing') == 'north' ? 'selected' : '' ?>>North</option>
+                <option value="south" <?= old('facing') == 'south' ? 'selected' : '' ?>>South</option>
+                <option value="east" <?= old('facing') == 'east' ? 'selected' : '' ?>>East</option>
+                <option value="west" <?= old('facing') == 'west' ? 'selected' : '' ?>>West</option>
+            </select>
+        </div>
+        <div class="mb-4">
             <label class="block text-gray-700">Status</label>
             <select name="status" class="border rounded w-full p-2">
-                <option value="available">Available</option>
-                <option value="booked">Booked</option>
-                <option value="alloted">Alloted</option>
-                <option value="transferred">Transferred</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="available" <?= old('status') == 'available' ? 'selected' : '' ?>>Available</option>
+                <option value="booked" <?= old('status') == 'booked' ? 'selected' : '' ?>>Booked</option>
+                <option value="alloted" <?= old('status') == 'alloted' ? 'selected' : '' ?>>Alloted</option>
+                <option value="transferred" <?= old('status') == 'transferred' ? 'selected' : '' ?>>Transferred</option>
+                <option value="cancelled" <?= old('status') == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
             </select>
         </div>
 
@@ -205,6 +213,7 @@
             let project_id = $(this).val();
             $('#phase').html('<option value="">Loading...</option>');
             $.getJSON("<?= site_url("/phases/byProject/") ?>" + project_id, function(data) {
+                console.log(data);
                 let options = '<option value="">Select Phase</option>';
                 data.forEach(row => options += `<option value="${row.id}">${row.name}</option>`);
                 $('#phase').html(options);
@@ -218,6 +227,7 @@
             let phase_id = $(this).val();
             $('#sector').html('<option value="">Loading...</option>');
             $.getJSON("<?= site_url('/sectors/byPhase/') ?>" + phase_id, function(data) {
+                console.log(data);
                 let options = '<option value="">Select Sector</option>';
                 data.forEach(row => options += `<option value="${row.id}">${row.name}</option>`);
                 $('#sector').html(options);
@@ -230,6 +240,7 @@
             let sector_id = $(this).val();
             $('#street').html('<option value="">Loading...</option>');
             $.getJSON("<?= site_url('/streets/bySector/') ?>" + sector_id, function(data) {
+                console.log(data);
                 let options = '<option value="">Select Street</option>';
                 data.forEach(row => options += `<option value="${row.id}">${row.street_no}</option>`);
                 $('#street').html(options);
@@ -240,6 +251,7 @@
             let street_id = $(this).val();
             $('#plot').html('<option value="">Loading...</option>');
             $.getJSON("<?= site_url('/plots/byStreet/') ?>" + street_id, function(data) {
+                console.log(data);
                 let options = '<option value="">Select Plot</option>';
                 data.forEach(row => options += `<option value="${row.id}">${row.plot_no} (${row.size} Marla)</option>`);
                 $('#plot').html(options);

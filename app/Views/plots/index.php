@@ -36,8 +36,8 @@
             <table class="min-w-full divide-y divide-gray-200" id="dataTable_1">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plot No.</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Block</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
@@ -48,8 +48,8 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     <?php foreach ($plots as $p): ?>
                         <tr>
+                            <td class="px-6 py-4 whitespace-nowrap"><?= $p['project_name'] . ' - ' . $p['phase_name'] . ' - ' . $p['sector_name'] . ' - ' . $p['street_no'] ?></td>
                             <td class="px-6 py-4 whitespace-nowrap"><?= $p['plot_no'] ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap"><?= $p['block_id'] ?></td>
                             <td class="px-6 py-4 whitespace-nowrap"><?= $p['size'] ?></td>
                             <td class="px-6 py-4 whitespace-nowrap"><?= $p['area_sqft'] ?> sq. ft</td>
                             <td class="px-6 py-4 whitespace-nowrap">Rs. <?= number_format($p['base_price'], 2) ?></td>
@@ -58,12 +58,14 @@
                                 <?= $p['status'] == 'Available' ? 'bg-green-100 text-green-800' : '' ?>
                                 <?= $p['status'] == 'Booked' ? 'bg-yellow-100 text-yellow-800' : '' ?>
                                 <?= $p['status'] == 'Allotted' ? 'bg-blue-100 text-blue-800' : '' ?>
+                                <?= $p['status'] == 'Transferred' ? 'bg-purple-100 text-purple-800' : '' ?>
+                                <?= $p['status'] == 'Cancelled' ? 'bg-blue-100 text-blue-800' : '' ?>
                                 <?= $p['status'] == 'Cancelled' ? 'bg-red-100 text-red-800' : '' ?>">
                                     <?= ucfirst($p['status']) ?>
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></button>
+                                <a href=<?= site_url("/plots/view/{$p['id']}") ?> class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></a>
                                 <a href=<?= site_url("/plots/edit/{$p['id']}") ?> class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></a> |
                                 <a href=<?= site_url("/plots/delete/{$p['id']}") ?> onclick="return confirm('Delete this plot?')" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></a>
                             </td>

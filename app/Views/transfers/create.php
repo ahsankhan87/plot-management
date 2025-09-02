@@ -100,7 +100,7 @@
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">Supporting Documents</label>
-                        <input type="file" name="documents[]" multiple class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <input type="file" name="documents" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         <small class="text-gray-500">Upload relevant documents (agreement, NOC, etc.)</small>
                     </div>
                 </div>

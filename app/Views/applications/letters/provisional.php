@@ -3,6 +3,9 @@
 
 <head>
     <title>Provisional Allotment Letter</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="<?= base_url() ?>assets/css/tailwindcss-3.4.16.css"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,50 +16,75 @@
             color: red;
             font-size: 12px;
         }
+
+        .watermark {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0.08;
+            pointer-events: none;
+            font-size: 7rem;
+            font-weight: bold;
+            color: #1e40af;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        @media print {
+            .watermark {
+                display: block !important;
+                position: fixed !important;
+                top: 30% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                opacity: 0.08 !important;
+                z-index: 9999 !important;
+                font-size: 7rem !important;
+                color: #1e40af !important;
+            }
+        }
     </style>
 </head>
 
-<body onload="window.print()">
-
-    <div class="p-8">
+<body onload="window.print()" style="position:relative;">
+    <!-- Watermark -->
+    <div class="watermark">
+        <?= esc(strtoupper($companyDetail['name'])) ?>
+    </div>
+    <div class="p-8 relative z-10 bg-white rounded-xl shadow-xl max-w-3xl mx-auto border border-gray-200">
         <?php if ($isDuplicate): ?>
             <p class="duplicate">Duplicate Copy</p>
         <?php endif; ?>
         <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold">EXECUTIVE HEIGHTS</h1>
-            <p>Near Technical College, Main Kohat Road, Peshawar</p>
-            <p>Contact: 091-2322432</p>
+            <h1 class="text-3xl font-extrabold text-primary mb-2 tracking-wide"><?= esc(strtoupper($companyDetail['name'])) ?></h1>
+            <p class="text-lg text-gray-700 mb-1"><?= esc($companyDetail['address']) ?></p>
+            <p class="text-gray-600">Contact: <?= esc($companyDetail['contact_number']) ?></p>
         </div>
-
         <div class="text-right mb-8">
-            <p><strong>Application No:</strong> <?= esc($application['app_no']) ?></p>
-            <p><strong>Date:</strong> <?= esc($application['app_date']) ?></p>
+            <p class="text-gray-700"><strong>Application No:</strong> <?= esc($application['app_no']) ?></p>
+            <p class="text-gray-700"><strong>Date:</strong> <?= esc($application['app_date']) ?></p>
         </div>
-
         <div class="mb-8">
-            <p class="font-semibold">To,</p>
-            <p>Customer Name</p>
-            <p>Address </p>
+            <p class="font-semibold text-gray-700">To,</p>
+            <p class="text-lg font-bold text-gray-800"><?= esc($application['customer_name']) ?></p>
+            <p class="text-gray-700"><?= esc($application['residential_address']) ?></p>
+            <p class="text-gray-700"><?= esc($application['phone']) ?></p>
         </div>
-
         <div class="mb-8">
-            <p class="font-semibold text-lg text-center mb-4">PROVISIONAL ALLOTMENT LETTER</p>
-
-            <p class="mb-4">Dear Sir/Madam,</p>
-
-            <p class="mb-4">With reference to your application dated <?= date('d/m/Y', strtotime($application['created_at'])) ?>, we are pleased to provisionally allot you the following unit in Executive Heights:</p>
-
+            <p class="font-semibold text-xl text-center mb-4 text-primary"><strong>PROVISIONAL ALLOTMENT LETTER</strong></p>
+            <p class="mb-4 text-gray-800">Dear Sir/Madam,</p>
+            <p class="mb-4 text-gray-700">With reference to your application dated <?= date('d/m/Y', strtotime($application['created_at'])) ?>, we are pleased to provisionally allot you the following unit in <span class="font-semibold text-primary"><?= esc($companyDetail['name']) ?></span>:</p>
             <div class="ml-8 mb-4">
-                <p><strong>Unit No:</strong> <?= $application['plot_id'] ?></p>
-                <p><strong>Project:</strong> <?= $application['project_id'] ?></p>
-                <p><strong>Size:</strong> sq.ft</p>
-                <p><strong>Total Price:</strong> Rs. <?= number_format($application['total_price'], 2) ?></p>
-                <p><strong>application Amount:</strong> Rs. <?= number_format($application['booking_amount'], 2) ?></p>
+                <p><span class="font-semibold text-gray-700">Unit No:</span> <span class="text-gray-900"><?= esc($plotDetail['plot_no']) ?></span></p>
+                <p><span class="font-semibold text-gray-700">Project:</span> <span class="text-gray-900"><?= esc($plotDetail['project_name']) . ' - ' . esc($plotDetail['phase_name']) . ' - ' . esc($plotDetail['sector_name']) . ' - ' . esc($plotDetail['street_no']) ?></span></p>
+                <p><span class="font-semibold text-gray-700">Size:</span> <span class="text-gray-900"><?= esc($plotDetail['size']) . ', ' . esc($plotDetail['area_sqft']) ?> sq.ft</span></p>
+                <p><span class="font-semibold text-gray-700">Total Price:</span> <span class="text-gray-900">Rs. <?= number_format($plotDetail['base_price'], 2) ?></span></p>
+                <p><span class="font-semibold text-gray-700">Booking Amount:</span> <span class="text-gray-900">Rs. <?= number_format($application['booking_amount'], 2) ?></span></p>
             </div>
-
-            <p class="mb-4">This allotment is provisional and subject to the following terms and conditions:</p>
-
-            <ol class="list-decimal ml-8 mb-4">
+            <p class="mb-4 text-gray-800">This allotment is provisional and subject to the following terms and conditions:</p>
+            <ol class="list-decimal ml-8 mb-4 text-gray-700">
                 <li class="mb-2">Installment Plan: <strong><?= esc($installmentPlan['name']) ?></strong> - <?= esc($installmentPlan['description'] ?? '') ?>
                     <?php
                     $months = (int)($installmentPlan['tenure_months'] ?? 0);
@@ -76,14 +104,13 @@
                 </li>
                 <li class="mb-2">Failure to pay installments for more than 3 months will result in cancellation of this allotment.</li>
                 <li class="mb-2">This allotment will be confirmed only after receipt of full payment.</li>
-                <li class="mb-2">All payments should be made through bank draft/pay order in favor of "Executive Heights".</li>
+                <li class="mb-2">All payments should be made through bank draft/pay order in favor of "<?= esc($companyDetail['name']) ?>".</li>
             </ol>
         </div>
-
-        <div class="mt-12">
-            <p>Yours sincerely,</p>
-            <p class="font-semibold mt-8">For Executive Heights</p>
-            <p class="mt-2">Authorized Signatory</p>
+        <div class="mt-6 text-right">
+            <p class="text-gray-700">Yours sincerely,</p>
+            <p class="font-semibold mt-8 text-primary">For <?= esc($companyDetail['name']) ?></p>
+            <p class="mt-2 text-gray-700">Authorized Signatory</p>
         </div>
     </div>
 </body>

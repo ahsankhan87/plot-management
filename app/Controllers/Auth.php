@@ -10,7 +10,7 @@ class Auth extends BaseController
 
     public function __construct()
     {
-        helper('audit'); // Load the audit helper for logging actions
+        helper(['audit', 'auth']); // Load the audit and auth helpers
         // Initialize the UserModel
         $this->userModel = new UserModel();
     }
@@ -155,7 +155,7 @@ class Auth extends BaseController
 
         if ($this->request->getMethod() === 'POST') {
             $rules = [
-                'password' => 'required|min_length[6]',
+                'password' => 'required|min_length[5]',
                 'password_confirm' => 'required|matches[password]'
             ];
 
