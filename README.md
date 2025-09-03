@@ -1,43 +1,73 @@
-# CodeIgniter 4 Application Starter
+# Plot / Land Management System
 
-## What is CodeIgniter?
+## Overview
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+Plot / Land Management System is a modern office management solution for real estate and property development companies, built with CodeIgniter 4 and TailwindCSS. It provides robust modules for managing plots, booking, projects, customers, expenses, roles, permissions, and document generation.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## Key Features
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+- **Role & Permission Management**: Fine-grained access control for users and modules.
+- **Customer & Company Management**: CRUD operations for customers, companies, and related entities.
+- **Projects, Phases, Sectors, Streets**: Hierarchical management of real estate assets.
+- **Plots & Booking Applications**: End-to-end plot allocation, Booking application tracking, and status management.
+- **Installment Plans & Payments**: Flexible installment scheduling and payment tracking.
+- **Expense Tracking & Reporting**: Categorized expense management with visual reports (Chart.js).
+- **Audit Logging**: Track all critical actions for compliance and review.
+- **Document Generation**: Professional allotment and provisional letters with watermark/logo integration.
+- **Database Backup & Restore**: Downloadable backups for data safety.
+- **Modern UI**: Responsive, user-friendly interface using TailwindCSS.
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+## Technologies Used
 
-## Installation & updates
+- CodeIgniter 4 (PHP Framework)
+- TailwindCSS (UI Design)
+- Chart.js (Reporting)
+- MySQL (Database)
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+## Modules
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+- Roles & Permissions
+- Users & User Roles
+- Customers
+- Companies
+- Projects, Phases, Sectors, Streets
+- Plots & Booking Applications
+- Installment Plans & Payments
+- Expenses & Expense Categories
+- Audit Logs
+- Document Letters (Allotment, Provisional)
 
-## Setup
+## Setup Instructions
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+1. Clone the repository:
+   ```
+   git clone https://github.com/ahsankhan87/plot-management.git
+   ```
+2. Install dependencies:
+   ```
+   composer install
+   ```
+3. Copy `env` to `.env` and configure database and baseURL settings.
+4. Set up your web server to point to the `public` folder.
+5. Run database migrations and seeders as needed.
 
-## Important Change with index.php
+## Deployment
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+- Supports deployment on shared hosting and XAMPP.
+- Ensure `public` is the web root.
+- Use the built-in backup feature for database safety.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+## License
 
-**Please** read the user guide for a better explanation of how CI4 works!
+MIT License
+
+## Author
+
+Ahsan Khan
+
+## Support
+
+For issues and feature requests, please open an issue on GitHub.
 
 ## Repository Management
 
@@ -56,6 +86,7 @@ PHP version 8.1 or higher is required, with the following extensions installed:
 - [mbstring](http://php.net/manual/en/mbstring.installation.php)
 
 > [!WARNING]
+>
 > - The end of life date for PHP 7.4 was November 28, 2022.
 > - The end of life date for PHP 8.0 was November 26, 2023.
 > - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
