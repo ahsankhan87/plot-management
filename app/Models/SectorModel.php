@@ -17,4 +17,12 @@ class SectorModel extends Model
             ->join('projects', 'projects.id = phases.project_id')
             ->findAll();
     }
+
+    public function getSectorDetails()
+    {
+        return $this->select('sectors.*, phases.name as phase_name, projects.name as project_name')
+            ->join('phases', 'phases.id = sectors.phase_id')
+            ->join('projects', 'projects.id = phases.project_id')
+            ->findAll();
+    }
 }

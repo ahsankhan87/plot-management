@@ -10,6 +10,7 @@ class Streets extends BaseController
     public function __construct()
     {
         $this->model = new StreetModel();
+        $this->sectorModel = new SectorModel();
         helper(['form', 'url', 'audit']);
     }
 
@@ -21,7 +22,8 @@ class Streets extends BaseController
 
     public function create()
     {
-        $data['sectors'] = $this->model->getWithSector();
+        $data['sectors'] =  $this->sectorModel->getSectorDetails();
+        $data['streets'] = $this->model->getWithSector();
         return view('streets/create', $data);
     }
 

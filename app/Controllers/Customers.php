@@ -64,7 +64,7 @@ class Customers extends Controller
             'nominee_relation' => 'required',
             'nominee_cnic' => 'required',
             'nominee_address' => 'required',
-            'photo_path'  => 'uploaded[photo_path]|max_size[photo_path,2048]|is_image[photo_path]|mime_in[photo_path,image/jpg,image/jpeg,image/png]'
+            'photo_path'  => 'permit_empty|uploaded[photo_path]|max_size[photo_path,2048]|is_image[photo_path]|mime_in[photo_path,image/jpg,image/jpeg,image/png]'
         ])) {
             return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
         }

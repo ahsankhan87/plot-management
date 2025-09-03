@@ -7,7 +7,7 @@
             <label class="block mb-1 text-gray-700">Sector</label>
             <select name="sector_id" required class="border rounded w-full px-3 py-2">
                 <?php foreach ($sectors as $sector): ?>
-                    <option value="<?= $sector['sector_id'] ?>"><?= $sector['project_name'] ?> → <?= $sector['phase_name'] ?> → <?= $sector['sector_name'] ?></option>
+                    <option value="<?= $sector['id'] ?>"><?= $sector['project_name'] ?> → <?= $sector['phase_name'] ?> → <?= $sector['name'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

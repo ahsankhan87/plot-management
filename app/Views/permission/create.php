@@ -14,7 +14,7 @@
             <label class="block mb-1">Key</label>
             <input type="text" name="key" class="border rounded w-full px-3 py-2" value="<?= old('key') ?>">
             <?php if (isset($errors['key'])): ?><div class="text-red-500 text-sm"><?= $errors['key'] ?></div><?php endif; ?>
-            <small class="text-gray-500">Use only lowercase letters, numbers, and underscores (e.g., view_customer).</small>
+            <small class="text-gray-500">Use only lowercase letters, numbers, and underscores (e.g., customers_view).</small>
         </div>
         <div>
             <label class="block mb-1">Description</label>
