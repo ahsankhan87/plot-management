@@ -349,6 +349,92 @@ class Applications extends Controller
 
         return redirect()->to('/applications');
     }
+    // Add to your application controller
+    public function printApplication($applicationId)
+    {
+        $application = $this->applicationModel->getApplicationForPrint($applicationId);
+
+        if (!$application) {
+            return redirect()->to('/applications')->with('error', 'Application not found');
+        }
+
+        $data = [
+            'application' => $application,
+            'signature' => [], //$this->applicationModel->getSignature($applicationId)
+            'companyDetail' => $this->companyModel->getCompany(),
+
+        ];
+
+        // return view('applications/print_application', $data);
+        return view('applications/print', $data);
+    }
+    public function printApplication_1($applicationId)
+    {
+        $application = $this->applicationModel->getApplicationForPrint($applicationId);
+
+        if (!$application) {
+            return redirect()->to('/applications')->with('error', 'Application not found');
+        }
+
+        $data = [
+            'application' => $application,
+            'signature' => [], //$this->applicationModel->getSignature($applicationId)
+            'companyDetail' => $this->companyModel->getCompany(),
+
+        ];
+
+        return view('applications/print_application', $data);
+    }
+    public function saveSignature($applicationId)
+    {
+        $signatureData = $this->request->getPost('signature');
+
+        if (empty($signatureData)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Signature is required'
+            ]);
+        }
+
+        if ($this->applicationModel->saveSignature($applicationId, $signatureData)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Signature saved successfully'
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Failed to save signature'
+        ]);
+    }
+
+    public function downloadApplication($applicationId)
+    {
+        $application = $this->applicationModel->getApplicationForPrint($applicationId);
+
+        if (!$application) {
+            return redirect()->to('/applications')->with('error', 'Application not found');
+        }
+
+        $data = [
+            'application' => $application,
+            'signature' => [], // $this->applicationModel->getSignature($applicationId)
+            'companyDetail' => $this->companyModel->getCompany(),
+        ];
+
+        $html = view('applications/print', $data);
+
+        // Generate PDF using dompdf
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $filename = 'booking_application_' . $application['app_no'] . '.pdf';
+
+        return $dompdf->stream($filename);
+    }
 
     public function delete($id)
     {

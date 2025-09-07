@@ -63,6 +63,11 @@ $routes->group('applications', ['filter' => 'auth'], function ($routes) {
     $routes->get('view/(:num)', 'Applications::view/$1');
     $routes->get('detail/(:num)', 'Applications::detail/$1');
     $routes->get('print-letter/(:num)/(:any)', 'Applications::printLetter/$1/$2');
+
+    $routes->get('print/(:num)', 'Applications::printApplication/$1');
+    $routes->get('print-1/(:num)', 'Applications::printApplication_1/$1');
+    $routes->post('save-signature/(:num)', 'Applications::saveSignature/$1');
+    $routes->get('download-application/(:num)', 'Applications::downloadApplication/$1');
 });
 
 $routes->group('plots', ['filter' => 'auth'], function ($routes) {

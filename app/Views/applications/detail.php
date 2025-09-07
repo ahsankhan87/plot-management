@@ -60,10 +60,15 @@
     <div class="bg-white p-4 rounded shadow mb-8">
         <h3 class="font-bold text-lg mb-4">Actions</h3>
         <div class="flex gap-3">
+            <!-- In your booking view page -->
+            <a href="<?= base_url("applications/print/{$application['id']}") ?>" target="_blank"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                <i class="fas fa-print mr-2"></i> Print Application
+            </a>
             <?php if ($application['status'] == 'Draft'): ?>
                 <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                     onclick="openModal('confirmBookingModal')">Confirm Booking</button>
-            <?php elseif ($application['status'] == 'Booked'): ?>
+            <?php elseif ($application['status'] == 'Booked' || $application['status'] == 'Provisional' || $application['status'] == 'Active'): ?>
                 <button class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
                     onclick="openModal('provisionalModal')">Generate Provisional Letter</button>
             <?php elseif ($application['status'] == 'Completed'): ?>

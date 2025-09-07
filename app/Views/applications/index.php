@@ -70,6 +70,8 @@
                             <td class="px-6 py-4 whitespace-nowrap"><?= $a['app_date'] ?></td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <a href="<?= site_url('/applications/print/' . $a['id']) ?>" target="_blank" class="text-green-600 hover:text-green-900 mr-3"><i class="fas fa-print"></i></a>
+                                <!-- <a href="<?= site_url('/applications/download-application/' . $a['id']) ?>" class="text-indigo-600 hover:text-indigo-900 mr-3"><i class="fas fa-download"></i></a> -->
                                 <!-- <a href="<?= site_url('/payments/record/' . $a['id']) ?>" class="text-purple-600">Payment</a> -->
                                 <a href="<?= site_url('/applications/detail/' . $a['id']) ?>" class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></a>
                                 <!-- <a href="<?= site_url('/applications/print-letter/' . $a['id']) ?>" class="text-blue-600">Print Letter</a> -->
