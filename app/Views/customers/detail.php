@@ -22,6 +22,10 @@
                     <div class="mb-2"><span class="font-medium text-gray-600">Father/Husband:</span> <?= esc($customer['father_husband']) ?></div>
                     <div class="mb-2"><span class="font-medium text-gray-600">Postal Address:</span> <?= esc($customer['postal_address']) ?></div>
                     <div class="mb-2"><span class="font-medium text-gray-600">Residential Address:</span> <?= esc($customer['residential_address']) ?></div>
+                    <div class="mb-2"><span class="font-medium text-gray-600">Occupation:</span> <?= esc($customer['occupation']) ?></div>
+                    <div class="mb-2"><span class="font-medium text-gray-600">Mobile:</span> <?= esc($customer['mobile']) ?></div>
+                    <div class="mb-2"><span class="font-medium text-gray-600">Date of Birth:</span> <?= esc(date('d/m/Y', strtotime($customer['dob']))) ?></div>
+
                 </div>
                 <div>
                     <h3 class="font-semibold text-gray-700 mb-2">Nominee Info</h3>
@@ -29,6 +33,14 @@
                     <div class="mb-2"><span class="font-medium text-gray-600">Relation:</span> <?= esc($customer['nominee_relation']) ?></div>
                     <div class="mb-2"><span class="font-medium text-gray-600">CNIC:</span> <?= esc($customer['nominee_cnic']) ?></div>
                     <div class="mb-2"><span class="font-medium text-gray-600">Address:</span> <?= esc($customer['nominee_address']) ?></div>
+                    <div class="mb-2"><span class="font-medium text-gray-600">Phone:</span> <?= esc($customer['nominee_phone']) ?></div>
+                    <div class="mb-2"><span class="font-medium text-gray-600">Nominee Photo:</span>
+                        <?php if (!empty($customer['nominee_photo'])): ?>
+                            <img src="<?= base_url('uploads/customers/' . $customer['nominee_photo']) ?>" alt="Nominee Photo" class="inline-block h-16 w-16 object-cover rounded ml-2">
+                        <?php else: ?>
+                            <span class="text-gray-400">No Photo</span>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>

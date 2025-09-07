@@ -34,10 +34,14 @@ class ApplicationsModel extends Model
     public function getApplicationDetail($id)
     {
         return $this->select('applications.*, customers.name as customer_name,customers.email,
-        customers.phone,customers.residential_address, plots.plot_no,plots.base_price, projects.name as project_name')
+        customers.phone,customers.residential_address, plots.plot_no,plots.base_price, 
+        projects.name as project_name, phases.name as phase_name, sectors.name as sector_name, streets.street_no')
             ->join('customers', 'customers.id = applications.customer_id')
             ->join('plots', 'plots.id = applications.plot_id')
             ->join('projects', 'projects.id = applications.project_id')
+            ->join('phases', 'phases.id = applications.phase_id', 'left')
+            ->join('sectors', 'sectors.id = applications.sector_id', 'left')
+            ->join('streets', 'streets.id = applications.street_id', 'left')
             ->where('applications.id', $id)
             ->first();
     }

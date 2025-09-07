@@ -13,6 +13,7 @@ use App\Models\PrintLogModel;
 use CodeIgniter\Controller;
 use App\Models\LetterPrintHistoryModel;
 use App\Models\CompanyModel;
+use App\Models\TermsModel;
 
 class Applications extends Controller
 {
@@ -274,9 +275,7 @@ class Applications extends Controller
     // Print Provisional or Allotment Letter
     public function printLetter($appId, $type = 'provisional')
     {
-        if (!auth()->user()->can('applications_print')) {
-            return view('errors/no_access');
-        }
+
 
         $letterModel = new LetterPrintHistoryModel();
         $appModel = new ApplicationsModel();
@@ -294,6 +293,10 @@ class Applications extends Controller
         $isDuplicate = $letterModel->where('application_id', $appId)
             ->where('letter_type', $type)
             ->countAllResults() > 0;
+
+        if ($isDuplicate > 0 && !auth()->user()->can('applications_print')) {
+            return view('errors/no_access');
+        }
 
         $letterModel->insert([
             'application_id' => $appId,
@@ -353,6 +356,8 @@ class Applications extends Controller
     public function printApplication($applicationId)
     {
         $application = $this->applicationModel->getApplicationForPrint($applicationId);
+        $termsModel = new TermsModel();
+        $terms = $termsModel->first();
 
         if (!$application) {
             return redirect()->to('/applications')->with('error', 'Application not found');
@@ -362,7 +367,7 @@ class Applications extends Controller
             'application' => $application,
             'signature' => [], //$this->applicationModel->getSignature($applicationId)
             'companyDetail' => $this->companyModel->getCompany(),
-
+            'terms' => $terms,
         ];
 
         // return view('applications/print_application', $data);
@@ -385,29 +390,7 @@ class Applications extends Controller
 
         return view('applications/print_application', $data);
     }
-    public function saveSignature($applicationId)
-    {
-        $signatureData = $this->request->getPost('signature');
 
-        if (empty($signatureData)) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Signature is required'
-            ]);
-        }
-
-        if ($this->applicationModel->saveSignature($applicationId, $signatureData)) {
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Signature saved successfully'
-            ]);
-        }
-
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Failed to save signature'
-        ]);
-    }
 
     public function downloadApplication($applicationId)
     {

@@ -32,25 +32,28 @@
 
         .watermark img {
             width: 300px;
-            opacity: 0.25;
+            opacity: 1.0;
             z-index: 9999;
             mix-blend-mode: multiply;
         }
 
         @media print {
+
             .watermark {
                 display: block !important;
                 position: fixed !important;
                 top: 30% !important;
                 left: 50% !important;
                 transform: translate(-50%, -50%) !important;
-                opacity: 0.10 !important;
+                opacity: 0.08 !important;
                 z-index: 9999 !important;
+                font-size: 7rem !important;
+                color: #1e40af !important;
             }
 
             .watermark img {
                 width: 300px !important;
-                opacity: 0.15 !important;
+                opacity: 1.0 !important;
             }
         }
     </style>
@@ -63,7 +66,7 @@
         <?php if (!empty($companyDetail['logo'])): ?>
             <img src="<?= base_url('uploads/company/' . $companyDetail['logo']) ?>" alt="Logo Watermark">
         <?php else: ?>
-            <span style="font-size:7rem; font-weight:bold; color:#1e40af;"><?= esc(strtoupper($companyDetail['name'])) ?></span>
+            <span style="font-size:3rem; font-weight:bold; color:#1e40af;"><?= esc(strtoupper($companyDetail['name'])) ?></span>
         <?php endif; ?>
     </div>
     <div class="p-8 relative z-10 bg-white rounded-xl shadow-xl max-w-3xl mx-auto border border-gray-200">

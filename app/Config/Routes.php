@@ -70,6 +70,11 @@ $routes->group('applications', ['filter' => 'auth'], function ($routes) {
     $routes->get('download-application/(:num)', 'Applications::downloadApplication/$1');
 });
 
+$routes->group('terms', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'TermsController::index');
+    $routes->post('update/(:num)', 'TermsController::update/$1');
+});
+
 $routes->group('plots', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'Plots::index');
     $routes->get('create', 'Plots::create');

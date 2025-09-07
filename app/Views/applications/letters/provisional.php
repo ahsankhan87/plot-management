@@ -18,18 +18,23 @@
         }
 
         .watermark {
+            display: block !important;
             position: fixed;
             top: 30%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 0;
-            opacity: 0.08;
+            z-index: 9999 !important;
+            opacity: 0.10;
             pointer-events: none;
-            font-size: 7rem;
-            font-weight: bold;
-            color: #1e40af;
             text-align: center;
             white-space: nowrap;
+        }
+
+        .watermark img {
+            width: 300px;
+            opacity: 1.0;
+            z-index: 9999;
+            mix-blend-mode: multiply;
         }
 
         @media print {
@@ -44,6 +49,11 @@
                 font-size: 7rem !important;
                 color: #1e40af !important;
             }
+
+            .watermark img {
+                width: 300px !important;
+                opacity: 1.0 !important;
+            }
         }
     </style>
 </head>
@@ -51,7 +61,11 @@
 <body onload="window.print()" style="position:relative;">
     <!-- Watermark -->
     <div class="watermark">
-        <?= esc(strtoupper($companyDetail['name'])) ?>
+        <?php if (!empty($companyDetail['logo'])): ?>
+            <img src="<?= base_url('uploads/company/' . $companyDetail['logo']) ?>" alt="Logo Watermark">
+        <?php else: ?>
+            <span style="font-size:3rem; font-weight:bold; color:#1e40af;"><?= esc(strtoupper($companyDetail['name'])) ?></span>
+        <?php endif; ?>
     </div>
     <div class="p-8 relative z-10 bg-white rounded-xl shadow-xl max-w-3xl mx-auto border border-gray-200">
         <?php if ($isDuplicate): ?>

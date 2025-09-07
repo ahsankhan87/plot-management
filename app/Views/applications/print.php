@@ -50,6 +50,26 @@
             .text-sm {
                 font-size: 0.8rem !important;
             }
+
+            .page-break {
+                page-break-before: always;
+                /* Force new page */
+            }
+
+            ol {
+                list-style-type: decimal !important;
+                margin-left: 20px !important;
+            }
+
+            ul {
+                list-style-type: disc !important;
+                margin-left: 20px !important;
+            }
+
+            ol li,
+            ul li {
+                display: list-item !important;
+            }
         }
     </style>
 
@@ -122,7 +142,7 @@
             </div>
             <div class="w-28 h-32 border-2 border-gray-400 flex items-center justify-center overflow-hidden">
                 <?php if (!empty($application['nominee_photo'])): ?>
-                    <img src="<?= base_url('uploads/nominees/' . $application['nominee_photo']) ?>"
+                    <img src="<?= base_url('uploads/customers/' . $application['nominee_photo']) ?>"
                         alt="Nominee Photo" class="object-cover w-full h-full">
                 <?php else: ?>
                     <span class="text-xs text-gray-500">Nominee Photo</span>
@@ -180,6 +200,17 @@
             </div>
         </div>
     </div>
+    <?php if (!empty($terms)): ?>
+        <div class="page-break"></div>
+        <div class="max-w-4xl mx-auto bg-white border border-gray-400 p-8 text-sm leading-relaxed">
+            <!-- <h2 class="text-center font-bold text-lg underline mb-4"><?= esc($terms['title'] ?? '') ?></h2> -->
+            <div class="prose print:prose"><?= $terms['content'] ?></div>
+        </div>
+
+        <!-- <div class="mt-12 text-right">
+            <p class="border-t border-gray-400 pt-2 inline-block">Signature</p>
+        </div> -->
+    <?php endif; ?>
 </body>
 
 </html>

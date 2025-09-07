@@ -19,6 +19,7 @@ class CustomersModel extends Model
         'phone',
         'email',
         'address',
+        'dob',
         'status',
         'created_at',
         'updated_at',
@@ -28,7 +29,11 @@ class CustomersModel extends Model
         'nominee_relation',
         'nominee_cnic',
         'nominee_address',
-        'photo_path'
+        'photo_path',
+        'mobile',
+        'occupation',
+        'nominee_photo',
+        'nominee_phone'
     ];
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';

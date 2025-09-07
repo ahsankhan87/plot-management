@@ -122,7 +122,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap"><?= (new \App\Models\UserModel())->find($payment['received_by'])['name'] ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?= $payment['remarks'] ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="<?= base_url("payments/receipt/{$payment['id']}") ?>" class="text-blue-600 hover:text-blue-900" target="_blank">Receipt</a>
+                                    <a href="<?= base_url("payments/receipt/{$payment['id']}") ?>" target="_blank" class=" text-blue-600 hover:text-blue-900" target="_blank">Receipt</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

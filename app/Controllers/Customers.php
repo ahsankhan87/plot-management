@@ -64,7 +64,16 @@ class Customers extends Controller
             'nominee_relation' => 'required',
             'nominee_cnic' => 'required',
             'nominee_address' => 'required',
-            'photo_path'  => 'permit_empty|uploaded[photo_path]|max_size[photo_path,2048]|is_image[photo_path]|mime_in[photo_path,image/jpg,image/jpeg,image/png]'
+            'photo_path'  => 'permit_empty|uploaded[photo_path]|max_size[photo_path,2048]|is_image[photo_path]|mime_in[photo_path,image/jpg,image/jpeg,image/png]',
+            'nominee_photo'  => 'permit_empty|uploaded[photo_path]|max_size[photo_path,2048]|is_image[photo_path]|mime_in[photo_path,image/jpg,image/jpeg,image/png]',
+            'occupation' => 'permit_empty',
+            'mobile' => 'permit_empty',
+            'email' => 'permit_empty|valid_email',
+            'postal_address' => 'permit_empty',
+            'address' => 'permit_empty',
+            'dob' => 'permit_empty|valid_date',
+            'nominee_phone' => 'permit_empty',
+
         ])) {
             return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
         }
@@ -76,6 +85,14 @@ class Customers extends Controller
             $photoFile->move(ROOTPATH . 'public/uploads/customers', $photoName);
         }
 
+        $nomineePhotoFile = $this->request->getFile('nominee_photo');
+        $nomineePhotoName = null;
+        if ($nomineePhotoFile && $nomineePhotoFile->isValid() && !$nomineePhotoFile->hasMoved()) {
+            $nomineePhotoName = $nomineePhotoFile->getRandomName();
+            $nomineePhotoFile->move(ROOTPATH . 'public/uploads/customers', $nomineePhotoName);
+        }
+
+        // Save customer
         $this->customerModel->save([
             'name'        => $this->request->getPost('name'),
             'father_husband' => $this->request->getPost('father_husband'),
@@ -91,6 +108,12 @@ class Customers extends Controller
             'photo_path' => $photoName,
             'address'     => $this->request->getPost('address'),
             'status'      => 'active',
+
+            'nominee_photo'  => $nomineePhotoName,
+            'occupation' => $this->request->getPost('occupation'),
+            'mobile' => $this->request->getPost('mobile'),
+            'dob' => $this->request->getPost('dob'),
+            'nominee_phone' => $this->request->getPost('nominee_phone'),
         ]);
         // Log the audit
         logAudit('CREATE', 'Customers', $this->customerModel->insertID(), [], $this->request->getPost());
@@ -110,6 +133,32 @@ class Customers extends Controller
     // Update record
     public function update($id)
     {
+
+        if (! $this->validateData($this->request->getPost(), [
+            'name'        => 'required',
+            'father_husband' => 'required',
+            'cnic'        => 'required',
+            'phone'       => 'required',
+            'residential_address' => 'required',
+            'nominee_name' => 'required',
+            'nominee_relation' => 'required',
+            'nominee_cnic' => 'required',
+            'nominee_address' => 'required',
+            'photo_path'  => 'permit_empty|uploaded[photo_path]|max_size[photo_path,2048]|is_image[photo_path]|mime_in[photo_path,image/jpg,image/jpeg,image/png]',
+            'nominee_photo'  => 'permit_empty|uploaded[photo_path]|max_size[photo_path,2048]|is_image[photo_path]|mime_in[photo_path,image/jpg,image/jpeg,image/png]',
+            'occupation' => 'permit_empty',
+            'mobile' => 'permit_empty',
+            'email' => 'permit_empty|valid_email',
+            'postal_address' => 'permit_empty',
+            'address' => 'permit_empty',
+            'dob' => 'permit_empty|valid_date',
+            'nominee_phone' => 'permit_empty',
+
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
+        }
+
+        //customer photo
         $photoFile = $this->request->getFile('photo_path');
         $photoName = $this->customerModel->find($id)['photo_path'] ?? null;
         if ($photoFile && $photoFile->isValid() && !$photoFile->hasMoved()) {
@@ -120,6 +169,19 @@ class Customers extends Controller
             $photoName = $photoFile->getRandomName();
             $photoFile->move(ROOTPATH . 'public/uploads/customers', $photoName);
         }
+
+        //nominee photo
+        $nomineePhotoFile = $this->request->getFile('nominee_photo');
+        $nomineePhotoName = $this->customerModel->find($id)['nominee_photo'] ?? null;
+        if ($nomineePhotoFile && $nomineePhotoFile->isValid() && !$nomineePhotoFile->hasMoved()) {
+            // Delete old photo if exists
+            if ($nomineePhotoName && file_exists(ROOTPATH . 'public/uploads/customers/' . $nomineePhotoName)) {
+                unlink(ROOTPATH . 'public/uploads/customers/' . $nomineePhotoName);
+            }
+            $nomineePhotoName = $nomineePhotoFile->getRandomName();
+            $nomineePhotoFile->move(ROOTPATH . 'public/uploads/customers', $nomineePhotoName);
+        }
+
         $this->customerModel->update($id, [
             'name'        => $this->request->getPost('name'),
             'father_husband' => $this->request->getPost('father_husband'),
@@ -134,6 +196,13 @@ class Customers extends Controller
             'nominee_address' => $this->request->getPost('nominee_address'),
             'photo_path' => $photoName,
             'address'     => $this->request->getPost('address'),
+
+            'nominee_photo'  => $nomineePhotoName,
+            'occupation' => $this->request->getPost('occupation'),
+            'mobile' => $this->request->getPost('mobile'),
+            'dob' => $this->request->getPost('dob'),
+            'nominee_phone' => $this->request->getPost('nominee_phone'),
+
             // 'status'      => $this->request->getPost('status'),
         ]);
         // Log the audit

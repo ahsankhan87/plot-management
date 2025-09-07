@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\InstallmentModel;
 use App\Models\PaymentModel;
 use App\Models\ApplicationsModel; // your applications table
+use app\Models\CompanyModel;
 
 class Payments extends BaseController
 {
@@ -77,12 +78,14 @@ class Payments extends BaseController
             return redirect()->back()->with('error', 'Payment not found');
         }
 
-        $booking = $this->applicationModel->getApplicationDetail($payment['application_id']);
+        $companyModel = new CompanyModel();
 
         $data = [
             'payment' => $payment,
-            'booking' => $booking,
-            'receivedBy' => (new \App\Models\UserModel())->find($payment['received_by'])
+            'booking' => $this->applicationModel->getApplicationDetail($payment['application_id']),
+            'receivedBy' => (new \App\Models\UserModel())->find($payment['received_by']),
+            'companyDetail' => $companyModel->getCompany(),
+            'totalPaid' => $this->paymentModel->getTotalPaid($payment['application_id']),
         ];
 
         return view('payments/receipt', $data);
