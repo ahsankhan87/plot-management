@@ -195,7 +195,7 @@ class Transfers extends BaseController
         if ($this->transferModel->approveTransfer($id, session()->get('user_id'))) {
 
             // Update plot status →  transferred
-            $this->plotModel->update($application['plot_id'], ['status' => 'transferred']);
+            //$this->plotModel->update($application['plot_id'], ['status' => 'transferred']);
 
             logAudit('APPROVE', 'Transfer', $id, $transfer, ['approved_by' => session()->get('user_id')]);
             return redirect()->to('/transfers/view/' . $id)->with('success', 'Transfer approved successfully');
